@@ -15,14 +15,21 @@ public class main
     public static void main(String[] args) 
     {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("=== Калькулятор математических выражений ===");
+        System.out.println("---Калькулятор математических выражений---");
         System.out.println("Поддерживаются: +, -, *, /, ^, (), функции (sin, cos, sqrt, tan) и переменные.");
+        System.out.println("Для выхода введите 'exit'.\n");
+
 
         while (true) 
         {
             System.out.print("Введите выражение: ");
             String expression = scanner.nextLine().trim();
 
+            if (expression.equalsIgnoreCase("exit")) {
+                System.out.println("Завершение работы программы.");
+                break;
+            }
+            
             if (expression.isEmpty()) continue;
 
             try 
@@ -60,8 +67,10 @@ public class main
             {
             	System.err.println("Критическая ошибка: " + e.getMessage() + "\n");
             }
-            
         }
+    
+        scanner.close();
+
     }
 
     public static Set<String> extractVariables(String expression) 
