@@ -33,10 +33,10 @@ public class Parser
     }
 
     
-    public double parse() throws Exception 
+    public double parse() throws EvaluationException
     {
         nextChar();
-        double x = parseExpression();
+        double x = parseExpression();       
         return x;
     }
 
@@ -69,6 +69,8 @@ public class Parser
 
     private double parseFactor() throws EvaluationException 
     {
+    	if (eat('+')) return parseFactor();
+        if (eat('-')) return -parseFactor();
        
         double x;
         int startPos = this.pos;
