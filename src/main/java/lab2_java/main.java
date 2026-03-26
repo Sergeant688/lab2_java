@@ -9,6 +9,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * Главный класс приложения. Обрабатывает ввод пользователя, ищет переменные,
+ * запрашивает их значения и выводит результат.
+ */
 public class main 
 {
 
@@ -42,7 +47,7 @@ public class main
                     System.out.print("  Введите значение для переменной '" + varName + "': ");
                     while (!scanner.hasNextDouble()) 
                     {
-                        System.out.println("  Ошибка! Введите корректное число (например, 2,5 или 2.5 в зависимости от локали ОС): ");
+                        System.out.println("  Ошибка! Введите корректное число (например, 2,5 или 2.5): ");
                         scanner.next();
                     }
                     variables.put(varName, scanner.nextDouble());
@@ -73,6 +78,13 @@ public class main
 
     }
 
+    /**
+     * Извлекает имена всех переменных из строки выражения с помощью регулярных выражений.
+     * Игнорирует имена встроенных функций.
+     *
+     * @param expression математическое выражение.
+     * @return множество уникальных имен переменных.
+     */
     public static Set<String> extractVariables(String expression) 
     {
         Set<String> variables = new HashSet<>();

@@ -2,6 +2,10 @@ package lab2_java;
 
 import java.util.Map;
 
+/**
+ * Класс для парсинга и вычисления математических выражений методом рекурсивного спуска.
+ * Поддерживает базовые арифметические операции, скобки, математические функции и переменные.
+ */
 public class Parser 
 {
     private final String expression;
@@ -9,18 +13,32 @@ public class Parser
     private int pos = -1;
     private int ch;
 
+    /**
+     * Конструктор парсера.
+     *
+     * @param expression строка с математическим выражением.
+     * @param variables  cловарь значений переменных. Может быть пустой, если переменных нет.
+     */
     public Parser(String expression, Map<String, Double> variables) 
     {
         this.expression = expression;
         this.variables = variables;
     }
 
-    
+    /**
+     * Считывает следующий символ из выражения, игнорируя пробелы.
+     */
     private void nextChar() 
     {
         ch = (++pos < expression.length()) ? expression.charAt(pos) : -1;
     }
 
+    /**
+     * Проверяет, совпадает ли текущий символ с ожидаемым, и если да, съедает его.
+     *
+     * @param charToEat ожидаемый символ.
+     * @return true, если символ совпал и был пропущен, иначе false.
+     */
     private boolean eat(int charToEat) 
     {
         while (ch == ' ') nextChar();
@@ -32,7 +50,12 @@ public class Parser
         return false;
     }
 
-    
+    /**
+     * Запускает процесс парсинга и вычисления выражения.
+     *
+     * @return результат вычисления выражения.
+     * @throws EvaluationException если выражение содержит синтаксические ошибки или неизвестные элементы.
+     */
     public double parse() throws EvaluationException
     {
         nextChar();

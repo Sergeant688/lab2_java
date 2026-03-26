@@ -8,6 +8,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Unit-тесты для проверки корректности вычислений.
+ */
 class ParserTest 
 {
 
