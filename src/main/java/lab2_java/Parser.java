@@ -40,48 +40,81 @@ public class Parser
         return x;
     }
 
-    private double parseExpression() throws Exception 
+    private double parseExpression() throws EvaluationException 
     {
         double x = parseTerm();
-       
-        if (eat('+')) x = x + parseTerm();
-        else if (eat('-')) x = x - parseTerm();
-        
-        return x;
+        for (;;) 
+        {
+            if (eat('+')) x += parseTerm();
+            else if (eat('-')) x -= parseTerm();
+            else return x;
+        }
     }
 
-    private double parseTerm() throws Exception 
+    private double parseTerm() throws EvaluationException 
     {
         double x = parseFactor();
-        if (eat('*')) x = x * parseFactor(); 
-        else if (eat('/')) 
+        for (;;) 
         {
-            x = x / parseFactor(); 
+            if (eat('*')) x *= parseFactor(); 
+            else if (eat('/')) 
+            {
+                double divisor = parseFactor();
+                if (divisor == 0) throw new EvaluationException("Деление на ноль!");
+                x /= divisor;
+            }
+            else return x;
         }
-        return x;
     }
 
-    private double parseFactor() throws Exception 
+    private double parseFactor() throws EvaluationException 
     {
-
-        double x = 0;
+       
+        double x;
         int startPos = this.pos;
         
         if (eat('(')) 
-        { 
+        {
             x = parseExpression();
-            eat(')'); 
+            if (!eat(')')) throw new EvaluationException("Ожидалась закрывающая скобка ')'");
         } 
-        else if (ch >= '0' && ch <= '9') 
-        { 
-            while (ch >= '0' && ch <= '9') nextChar();
+        else if ((ch >= '0' && ch <= '9') || ch == '.') 
+        {
+            while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
             x = Double.parseDouble(expression.substring(startPos, this.pos));
         } 
-        else 
+        else if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z') 
         {
-            throw new Exception("Ошибка парсинга"); 
+            while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9') nextChar();
+            String name = expression.substring(startPos, this.pos);
+            
+            if (eat('(')) 
+            {
+                x = parseExpression();
+                if (!eat(')')) throw new EvaluationException("Ожидалась закрывающая скобка ')' после функции " + name);
+                
+                switch (name.toLowerCase()) 
+                {
+                    case "sqrt": x = Math.sqrt(x); break;
+                    case "sin": x = Math.sin(x); break;
+                    case "cos": x = Math.cos(x); break;
+                    case "tan": x = Math.tan(x); break;
+                    default: throw new EvaluationException("Неизвестная функция: " + name);
+                }
+            } 
+            else 
+            {
+                if (variables != null && variables.containsKey(name)) 
+                {
+                    x = variables.get(name);
+                } 
+                
+                else throw new EvaluationException("Неизвестная переменная: " + name);
+            }
         }
+        else throw new EvaluationException("Неожиданный символ: " + (char) ch);
 
+        if (eat('^')) x = Math.pow(x, parseFactor());
 
         return x;
     }
